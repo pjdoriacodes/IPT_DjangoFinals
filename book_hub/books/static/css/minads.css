@@ -1,0 +1,1074 @@
+/* =========================
+   RESET + BASE
+========================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f6f4f2, #f0ece8);
+    color: #2d2d2d;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.layout {
+    display: flex;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+
+    position: sticky;   /* 🔥 makes it stick */
+    top: 0;             /* required for sticky */
+
+    padding: 25px 18px;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(0,0,0,0.05);
+
+    display: flex;
+    flex-direction: column; /* important for bottom items */
+}
+
+.logo-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 20px;
+}
+
+.logo-img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.logo-box h2 {
+    font-size: 18px;
+    margin: 0;
+}
+/* MENU */
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    padding: 12px 14px;
+    border-radius: 14px;
+    margin: 8px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.25s ease;
+    font-weight: 500;
+}
+
+/* ICON */
+.sidebar li i {
+    font-size: 18px;
+}
+
+/* HOVER */
+.sidebar li:hover {
+    background: rgba(122,75,42,0.1);
+    transform: translateX(6px);
+}
+
+/* ACTIVE */
+.sidebar li.active {
+    background: linear-gradient(135deg, #7a4b2a, #5f3921);
+    color: white;
+    box-shadow: 0 10px 25px rgba(122,75,42,0.35);
+}
+
+.sidebar-bottom {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+}
+
+.sidebar-bottom button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+
+    border: none;
+    border-radius: 10px;
+
+    cursor: pointer;
+    font-size: 14px;
+
+    transition: 0.3s;
+}
+
+/* =========================
+   MAIN CONTENT (IMPORTANT)
+========================= */
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+
+
+.sidebar-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    padding: 15px;
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: center;   /* centers horizontally */
+    align-items: center;
+}
+
+.sidebar-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    padding: 15px;
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: center;   /* centers horizontally */
+    align-items: center;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+/* BASE */
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    text-decoration: none;
+    color: #ff4d4d;
+
+    padding: 12px 14px;
+    border-radius: 10px;
+
+    transition: all 0.25s ease;
+}
+
+/* =========================
+   HOVER (ONLY COLOR CHANGE)
+========================= */
+.logout-btn:hover {
+    color: #7a4b2a;   /* change font color only */
+    transform: translateX(6px);
+}
+
+/* ICON */
+.logout-btn i {
+    transition: all 0.25s ease;
+    color: inherit;
+}
+
+/* ICON HOVER */
+.logout-btn:hover i {
+    color: #5f3921;
+    transform: translateX(3px);
+}
+
+.logout-btn:active i {
+    color: #ffffff;
+}
+
+/* =========================
+   MODAL BACKDROP
+========================= */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(6px);
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 999;
+}
+
+/* =========================
+   MODAL BOX
+========================= */
+.modal-content {
+    background: #2f2b28;
+    padding: 25px;
+    width: 320px;
+    border-radius: 14px;
+
+    text-align: center;
+
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+
+    animation: popIn 0.25s ease;
+}
+
+/* TITLE */
+.modal-content h3 {
+    margin-bottom: 10px;
+    color:  #000000;
+}
+
+/* TEXT */
+.modal-content p {
+    color: #696969;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   MODAL BUTTONS
+========================= */
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-weight: 500;
+}
+
+/* CANCEL */
+#cancelLogoutBtn {
+    background: #fff;
+    color: #444;
+
+    border: 1px solid #ccc;   /* ✅ added border */
+    border-radius: 8px;
+
+    transition: all 0.25s ease;
+}
+
+/* HOVER */
+#cancelLogoutBtn:hover {
+    background: #bebebe39;
+    border-color: #878686;    /* optional: border reacts on hover */
+    color: #444;
+}
+/* DANGER LOGOUT */
+#confirmLogoutBtn {
+    background: #7a4b2a;
+    color: white;
+}
+
+#confirmLogoutBtn:hover {
+    background: #5f3921;
+    box-shadow: 0 10px 25px rgba(122,75,42,0.35);
+}
+
+/* =========================
+   MODAL ANIMATION
+========================= */
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+/* =========================
+   MAIN
+========================= */
+.main {
+    flex: 1;
+    padding: 40px;
+}
+
+/* SECTION CONTROL */
+main section {
+    display: none;
+    animation: fadeSlide 0.4s ease;
+}
+
+main section:not(.hidden) {
+    display: block;
+}
+
+/* ANIMATION */
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* =========================
+   TITLES
+========================= */
+h1 {
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 25px;
+    font-size: 28px;
+}
+
+/* =========================
+   CARDS
+========================= */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(8px);
+    padding: 22px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* HOVER */
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* =========================
+   HEADER ROW
+========================= */
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.btn-primary {
+    background: linear-gradient(135deg, #7a4b2a, #5f3921);
+    color: white;
+    margin-top: 10px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s;
+    font-weight: 500;
+}
+
+/* BUTTON HOVER */
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(122,75,42,0.35);
+}
+
+/* =========================
+   SEARCH
+========================= */
+.search {
+    width: 100%;
+    margin: 20px 0;
+    padding: 13px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255,255,255,0.7);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.search:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(122,75,42,0.2);
+}
+
+/* =========================
+   BOOK CARD
+========================= */
+.book-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-radius: 18px;
+    margin-bottom: 15px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(6px);
+    transition: all 0.3s ease;
+}
+
+/* HOVER */
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+
+/* IMAGE */
+.book-card img {
+    width: 60px;
+    border-radius: 12px;
+}
+
+/* INFO */
+.book-info {
+    flex: 1;
+    margin-left: 15px;
+}
+
+/* TAGS */
+.tags span {
+    font-size: 11px;
+    background: #eee;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+/* ACTION ICONS */
+.actions i {
+    font-size: 18px;
+    margin-left: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.actions i:hover {
+    transform: scale(1.25);
+}
+
+.delete {
+    color: #e74c3c;
+}
+
+/* =========================
+   BORROW CARD
+========================= */
+.borrow-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px;
+    border-radius: 18px;
+    margin: 15px 0;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(6px);
+    transition: 0.3s;
+}
+
+.borrow-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.08);
+}
+
+.borrow-left {
+    display: flex;
+    gap: 15px;
+}
+
+.borrow-left img {
+    width: 60px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.meta {
+    font-size: 12px;
+    color: #666;
+}
+
+.meta.due {
+    color: #e74c3c;
+}
+
+/* RIGHT */
+.borrow-right {
+    display: flex;
+    align-items: center;
+}
+
+/* RETURN BUTTON */
+.btn-return {
+    background: linear-gradient(135deg, #7a4b2a, #5f3921);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-return:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(122,75,42,0.35);
+}
+
+/* RETURNED */
+.returned-badge {
+    background: #d4edda;
+    color: #2e7d32;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+/* =========================
+   MODAL
+========================= */
+.modal {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+/* MODAL BOX */
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    width: 380px;
+    animation: popIn 0.3s ease;
+}
+
+/* ANIMATION */
+@keyframes popIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* INPUTS */
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+/* CLOSE */
+.close {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 22px;
+    font-weight: 600;
+    color: #2f3a4a;
+}
+
+/* Green active dot */
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+
+    background: #22c55e;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+
+    animation: pulse 1.8s infinite;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+    }
+    70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    }
+}
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px 30px;
+    margin-top: 25px;
+
+    background: linear-gradient(145deg, #ffffff, #f3f5fb);
+    border: 1px solid #e6e9f2;
+    border-radius: 16px;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.empty-state:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* Optional icon circle */
+.empty-state::before {
+    content: "📚";
+    font-size: 40px;
+    margin-bottom: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+
+    background: #eef2ff;
+}
+
+/* Title */
+.empty-state h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2f3a4a;
+    margin-bottom: 6px;
+}
+
+/* Subtitle */
+.empty-state p {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.popular-section {
+    margin-top: 30px;
+}
+
+.book-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.book-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 12px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e6e9f2;
+
+    transition: 0.2s;
+}
+
+.book-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.rank {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #111827;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.tag {
+    background: #eef2ff;
+    color: #4f46e5;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.rating {
+    font-size: 13px;
+    color: #f59e0b;
+}
+
+.popular-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+
+    margin-bottom: 15px;
+}
+
+/* Fire icon animation */
+.popular-title i {
+    color: #f97316;
+    font-size: 22px;
+
+    animation: flame 1.5s infinite ease-in-out;
+}
+
+/* subtle flame-like pulse */
+@keyframes flame {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.9;
+    }
+    50% {
+        transform: scale(1.15) rotate(-3deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.9;
+    }
+}
+
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.star {
+    font-size: 16px;
+}
+
+/* FULL STAR */
+.star.full {
+    color: #f59e0b;
+}
+
+/* HALF STAR */
+.star.half {
+    color: #fbbf24;
+}
+
+/* EMPTY STAR */
+.star.empty {
+    color: #d1d5db;
+}
+
+/* rating number */
+.rating-number {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-left: 5px;
+}
+
+.borrow-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    color: #444;
+}
+
+.borrow-info i {
+    color: #6366f1;
+}
+
+/* =========================
+   BACKDROP FEEL MODAL
+========================= */
+
+.success-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    width: 340px;
+    padding: 38px 30px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(16px);
+    border-radius: 26px;
+    text-align: center;
+    box-shadow: 0 35px 90px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(.2,.9,.2,1);
+    z-index: 9999;
+}
+
+/* SHOW */
+.success-box.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* =========================
+   ICON AREA
+========================= */
+
+.icon-wrapper {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================
+   SPINNER (REALISTIC RING)
+========================= */
+
+.loader {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 5px solid #e9e9e9;
+    border-top: 5px solid #4CAF50;
+    animation: spin 1s linear infinite;
+    transition: all 0.4s ease;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* fade out loader smoothly */
+.success-box.done .loader {
+    opacity: 0;
+    transform: scale(0.6);
+}
+
+/* =========================
+   CHECKMARK SVG (REAL DRAW EFFECT)
+========================= */
+
+.checkmark {
+    width: 72px;
+    height: 72px;
+    stroke: #4CAF50;
+    stroke-width: 5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+
+    opacity: 0;
+    transform: scale(0.6);
+}
+
+/* animate draw */
+.success-box.done .checkmark {
+    animation: drawCheck 0.6s ease forwards 0.2s;
+}
+
+@keyframes drawCheck {
+    0% {
+        stroke-dashoffset: 100;
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* =========================
+   TEXT (REAL APP STYLE)
+========================= */
+
+.success-box h3 {
+    margin: 5px 0 5px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f1f1f;
+}
+
+.success-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+/* =========================
+   MICRO ANIMATION FEEL
+========================= */
+
+.success-box.show h3 {
+    animation: fadeUp 0.4s ease forwards 0.1s;
+}
+
+.success-box.show p {
+    animation: fadeUp 0.4s ease forwards 0.2s;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* SUCCESS GLOW */
+.success-box.done {
+    box-shadow: 0 35px 100px rgba(76, 175, 80, 0.25);
+}
+
+/* =========================
+   DELETE MODAL
+========================= */
+
+.delete-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s ease;
+
+    z-index: 9999;
+}
+
+.delete-modal.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* BOX */
+.delete-box {
+    background: #fff;
+    padding: 30px 25px;
+    border-radius: 16px;
+    text-align: center;
+
+    width: 320px;
+    max-width: 90%;
+
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+
+    transform: scale(0.9);
+    transition: 0.3s ease;
+}
+
+.delete-modal.show .delete-box {
+    transform: scale(1);
+}
+
+/* TEXT */
+.delete-box h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    color: #333;
+}
+
+.delete-box p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* BUTTONS */
+.delete-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.cancel-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #ddd;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #ccc;
+}
+
+.delete-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: #7a4b2a;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.delete-btn:hover {
+    background: #5f3921;
+    box-shadow: 0 10px 25px rgba(122,75,42,0.35);
+}

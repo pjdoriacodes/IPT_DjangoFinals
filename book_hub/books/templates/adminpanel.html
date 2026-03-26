@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<link rel="icon" type="image/x-icon" href="/static/images/logowhite.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/static/css/minads.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+       <div class="logo-box">
+    <img src="/static/images/logo.png" alt="Logo" class="logo-img">
+    <div>
+        <h2>Admin Panel</h2>
+        <p>Book Management</p>
+    </div>
+</div>
+
+        <nav>
+            <ul>
+                <li class="active" onclick="showSection(event,'dashboard')">
+                    <i class="ri-dashboard-line"></i> Dashboard
+                </li>
+                <li onclick="showSection(event,'books')">
+                    <i class="ri-book-2-line"></i> Books
+                </li>
+                <li onclick="showSection(event,'borrows')">
+                    <i class="ri-user-3-line"></i> Borrowers
+                </li>
+            </ul>
+        </nav>
+  <div class="sidebar-bottom">
+    <a href="{% url 'logout' %}" class="logout-btn">
+        <i class="ri-logout-box-r-line"></i>
+        <span>Logout</span>
+    </a>
+</div>
+        
+    </aside>
+    <div id="logoutConfirmModal" class="modal">
+    <div class="modal-content">
+        <h3>Logout</h3>
+        <p>Do you really want to logout?</p>
+
+        <div class="modal-actions">
+            <button id="cancelLogoutBtn">Cancel</button>
+            <button id="confirmLogoutBtn" class="danger">Logout</button>
+        </div>
+    </div>
+</div>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- DASHBOARD -->
+        <section id="dashboard">
+            <h1>Dashboard Overview</h1>
+
+          <div class="cards">
+
+    <div class="card">
+        <div class="icon blue">
+            <i class="ri-book-3-line"></i>
+        </div>
+        <p>Total Books</p>
+        <h2>{{ total_books }}</h2>
+    </div>
+
+    <div class="card green">
+        <div class="icon">
+            <i class="ri-checkbox-circle-fill"></i>
+        </div>
+        <p>Available</p>
+        <h2>{{ available }}</h2>
+    </div>
+
+    <div class="card orange">
+        <div class="icon">
+            <i class="ri-time-fill"></i>
+        </div>
+        <p>Active Borrows</p>
+        <h2>{{ borrowed }}</h2>
+    </div>
+
+    <div class="card red">
+        <div class="icon">
+            <i class="ri-error-warning-fill"></i>
+        </div>
+        <p>Overdue</p>
+        <h2>0</h2>
+    </div>
+
+</div>
+
+            <div class="popular-section">
+    <h2 class="popular-title">
+    <i class="ri-fire-line"></i>
+    Popular Books
+</h2>
+
+    <div class="book-list">
+
+        {% for book in popular_books %}
+        <div class="book-card">
+
+            <div class="rank">{{ forloop.counter }}</div>
+
+            <img src="{{ book.cover_url }}" alt="book">
+
+            <div class="book-info">
+                <h3>{{ book.title }}</h3>
+                <p class="author">{{ book.author }}</p>
+
+                <span class="tag">{{ book.category }}</span>
+
+            <div class="rating-display">
+
+    {% with avg=book.avg_rating|default:0 %}
+
+        {% for i in "12345" %}
+            {% if avg >= i|add:"0" %}
+                <!-- Full Star -->
+                <i class="ri-star-fill star full"></i>
+
+            {% elif avg >= i|add:"-0.5" %}
+                <!-- Half Star -->
+                <i class="ri-star-half-fill star half"></i>
+
+            {% else %}
+                <!-- Empty Star -->
+                <i class="ri-star-line star empty"></i>
+            {% endif %}
+        {% endfor %}
+
+        <span class="rating-number">
+            {{ avg|floatformat:1 }}
+        </span>
+
+    {% endwith %}
+
+</div>
+            </div>
+
+          <div class="borrow-info">
+   <i class="ri-group-line" style="color:#7a4b2a;"></i>
+    <span class="count">{{ book.total_borrows }}</span>
+    <span class="label">borrows</span>
+</div>
+
+        </div>
+        {% empty %}
+
+        <p>No popular books yet.</p>
+
+        {% endfor %}
+
+    </div>
+</div>
+        </section>
+
+        <!-- BOOKS -->
+        <section id="books" class="hidden">
+            <div class="header-row">
+                <h1>Manage Books</h1>
+                <button class="btn-primary" onclick="openModal()">
+                    <i class="ri-add-line"></i> Add Book
+                </button>
+            </div>
+
+            <input class="search" placeholder="Search books...">
+
+            <div class="book-list">
+                {% for book in books %}
+                <div class="book-card">
+                    <img src="{{ book.cover_url }}">
+                    <div class="book-info">
+                        <h3>{{ book.title }}</h3>
+                        <p>{{ book.author }}</p>
+                        <div class="tags">
+                            <span>{{ book.category }}</span>
+{% if book.available %}
+    <span class="available">Available</span>
+{% else %}
+    <span class="unavailable">Unavailable</span>
+{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <!-- EDIT -->
+                        <i class="ri-pencil-line"
+                           onclick="editBook(
+                        '{{ book.id }}',
+                        '{{ book.title }}',
+                        '{{ book.author }}',
+                        '{{ book.category }}',
+                        '{{ book.cover_url }}',
+                        '{{ book.pages }}',
+                        '{{ book.year }}',
+                        '{{ book.description|escapejs }}'
+                        )">
+                        </i>
+
+                        <!-- DELETE -->
+                        <a href="javascript:void(0)" class="delete-link" data-url="{% url 'delete_book' book.id %}">
+                        <i class="ri-delete-bin-line delete"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+      <section id="borrows" class="hidden">
+    <h1>Manage Borrowers</h1>
+
+    <h2 class="section-title">
+    <span class="status-dot"></span>
+    Active Borrows ({{ borrows|length }})
+</h2>
+
+    {% for borrow in borrows %}
+    <div class="borrow-card">
+
+        <!-- LEFT SIDE -->
+        <div class="borrow-left">
+            <img src="{{ borrow.book.cover_url }}">
+
+            <div class="borrow-info">
+                <h3>{{ borrow.book.title }}</h3>
+                <p class="author">{{ borrow.book.author }}</p>
+
+                <p class="meta">
+                    👤 {{ borrow.user.username }}
+                </p>
+
+                <p class="meta">
+                    📅 {{ borrow.borrowed_at|date:"M d, Y" }}  
+                    ⏰ {{ borrow.borrowed_at|time:"h:i A" }}
+                </p>
+
+                <p class="meta due">
+                  Due: {{ borrow.due_date|date:"M d, Y" }}
+                </p>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="borrow-right">
+            <a href="{% url 'return_book' borrow.id %}" class="btn-return">
+                <i class="ri-arrow-go-back-line"></i> Return
+            </a>
+        </div>
+
+    </div>
+
+    {% empty %}
+
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state">
+        <h3>No active borrows at the moment</h3>
+        <p>All books are returned. 🎉</p>
+    </div>
+
+    {% endfor %}
+</section>
+    </main>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+
+        <span class="close" onclick="closeModal()">&times;</span>
+
+        <h2 id="modalTitle">Add Book</h2>
+
+     <form id="bookForm" method="POST" action="{% url 'adminpanel' %}" onsubmit="handleSubmit(event)">
+    {% csrf_token %}
+
+    <input type="hidden" name="book_id" id="bookId">
+
+    <input type="text" name="title" id="title" placeholder="Book Title" required>
+    <input type="text" name="author" id="author" placeholder="Author" required>
+
+    <select name="category" id="category" required>
+        <option value="">Select Category</option>
+        <option value="Fiction">Fiction</option>
+        <option value="Science">Science</option>
+        <option value="History">History</option>
+        <option value="Technology">Technology</option>
+        <option value="Education">Education</option>
+    </select>
+
+    <input type="number" name="pages" id="pages" placeholder="Number of Pages" required>
+    <input type="number" name="year" id="year" placeholder="Year Published" required>
+
+    <textarea name="description" id="description" placeholder="Book Description" required></textarea>
+
+    <input type="text" name="cover_url" id="cover_url" placeholder="Cover Image URL" required>
+
+    <button class="btn-primary">
+        <span id="modalBtnText">Add Book</span>
+    </button>
+</form>
+
+    </div>
+</div>
+
+<div id="successBox" class="success-box">
+    <div class="icon-wrapper">
+        <div class="loader"></div>
+        <svg class="checkmark" viewBox="0 0 52 52">
+            <path d="M14 27 L22 35 L38 18" />
+        </svg>
+    </div>
+
+    <h3>Success</h3>
+   <p id="successMessage">Book added successfully</p>
+</div>
+
+<div id="deleteModal" class="delete-modal">
+    <div class="delete-box">
+        <h3>Delete Book?</h3>
+        <p>This action cannot be undone.</p>
+
+        <div class="delete-actions">
+            <button class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+            <a id="confirmDeleteBtn" class="delete-btn">Delete</a>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/ads.js"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Reading Room</title>
+    <link rel="icon" type="image/x-icon" href="/static/images/logowhite.png">
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/logs.css">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+
+            <div class="login-logo">
+    <img src="/static/images/logo.png" alt="Book Hub Logo">
+</div>
+
+<h2>Welcome Back</h2>
+<p class="subtitle">Login to continue to your account</p>
+
+            {% if messages %}
+    {% for message in messages %}
+        <div class="error-box">
+            <span class="error-icon">!</span>
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+            <!-- Form -->
+           <form method="POST" class="login-form">
+    {% csrf_token %}
+
+    <div class="input-group">
+        <input type="text" name="username" required>
+        <label>Username</label>
+    </div>
+
+    <div class="input-group">
+        <input type="password" name="password" required>
+        <label>Password</label>
+    </div>
+
+    <button type="submit" class="login-btn">Login</button>
+</form>
+
+        <p class="footer-text">
+           Don’t have an account? <a href="{% url 'signup' %}">Sign up</a>
+        </p>
+    </div>
+</div>
+
+    <!-- Success Modal -->
+    <div id="loginSuccess" class="login-success">
+        <div class="success-box">
+            <div class="checkmark-circle">
+                <i class="check-icon">✔</i>
+                <div class="pulse-ring"></div>
+            </div>
+            <h3>Login Successful!</h3>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        const loginSuccess = "{{ login_success|default:'False' }}";
+        const redirectUrl = "{{ redirect_url|default:'/' }}";
+
+        if (loginSuccess === "True") {
+            const modal = document.getElementById("loginSuccess");
+
+            setTimeout(() => {
+                modal.classList.add("show");
+            }, 50);
+
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            },3000);
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Book Hub</title>
+    <link rel="stylesheet" href="/static/css/homehome.css">
+    <link rel="icon" type="image/x-icon" href="/static/images/logowhite.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="nav-left">
+    <div class="logo-container">
+        <img src="/static/images/logo.png" class="logo" alt="B Logo">
+        <span class="logo-text">ook Hub</span>
+    </div>
+</div>
+   <div class="nav-right">
+    {% if user.is_authenticated %}
+        <div class="user-badge">
+    <i class="fa-solid fa-user user-icon"></i>
+    <span class="welcome">Hi, {{ request.user.username }}</span>
+</div>
+
+      <!-- HTML -->
+<div class="toggle-wrapper">
+    <input type="checkbox" id="themeToggle" class="toggle-checkbox">
+    <label for="themeToggle" class="toggle-label">
+        <span class="toggle-ball">
+            <i class="fa-solid fa-sun"></i>
+        </span>
+    </label>
+</div>
+
+      <a href="#" class="logout-btn" onclick="openLogoutModal(event)">Logout</a>
+    {% else %}
+
+        <a href="/login/" class="login-btn">Login</a>
+    {% endif %}
+</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>The Reading Room</h1>
+        <p>Browse, borrow, and track your reading journey</p>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- TOP NAV -->
+<div class="top-nav">
+    <button class="tab active" onclick="showTab('catalog', this)">Catalog</button>
+    <button class="tab" onclick="showTab('mybooks', this); markMyBooksVisited();">
+      <i class="fa-solid fa-book"></i> My Books
+        {% if show_badge %}
+            <span class="badge">{{ borrowed_count }}</span>
+        {% endif %}
+    </button>
+</div>
+
+<!-- SEARCH + FILTER -->
+<div class="controls-row">
+    <input type="text" id="searchInput" placeholder="Search books or authors...">
+    <div class="filters">
+        <button class="filter active">All</button>
+        {% for cat in categories %}
+            <button class="filter">{{ cat }}</button>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ========================= -->
+<!-- 📚 CATALOG TAB -->
+<!-- ========================= -->
+<div id="catalog" class="tab-content active">
+    <div class="grid">
+        {% for book in books %}
+       <div class="card {% if not book.available %}disabled{% endif %}" 
+    data-id="{{ book.id }}"
+    data-title="{{ book.title }}" 
+    data-author="{{ book.author }}"
+    data-category="{{ book.category|lower }}"
+    data-available="{{ book.available }}"
+    onclick="openModal(
+        '{{ book.title|escapejs }}',
+        '{{ book.author|escapejs }}',
+        '{{ book.description|escapejs }}',
+        '{{ book.cover_url|escapejs }}',
+        '{{ book.pages }}',
+        '{{ book.year }}',
+        '{{ book.id }}',
+        '{{ book.available }}',
+        '{{ book.category|escapejs }}'
+    )">
+
+            <div class="card-img">
+                <img src="{{ book.cover_url }}" alt="{{ book.title }}">
+                <div class="card-overlay">
+                    <span class="quick-btn">Quick View</span>
+                </div>
+            </div>
+
+            <div class="card-info">
+               <span class="category-badge">
+    {{ book.category }} - 
+    <span class="status {% if book.available %}available{% else %}unavailable{% endif %}">
+        {% if book.available %}Available{% else %}Unavailable{% endif %}
+    </span>
+</span>
+                <h3>{{ book.title }}</h3>
+                <p>{{ book.author }}</p>
+                <div class="card-rating" data-rating="{{ book.avg_rating|default:0 }}">
+    {% with avg=book.avg_rating|default:0 %}
+        {% for i in "12345" %}
+            {% if avg >= forloop.counter %}
+                <i class="fa-solid fa-star star filled"></i>
+            {% elif avg >= forloop.counter|add:"-0.5" %}
+                <i class="fa-solid fa-star-half-stroke star filled"></i>
+            {% else %}
+                <i class="fa-regular fa-star star"></i>
+            {% endif %}
+        {% endfor %}
+    {% endwith %}
+
+    <span class="rating-number">
+    {{ book.avg_rating|default_if_none:0|floatformat:1 }}
+</span>
+</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ========================= -->
+<!-- 📖 MY BOOKS TAB -->
+<!-- ========================= -->
+<div id="mybooks" class="tab-content">
+    <h2>My Borrowed Books</h2>
+
+    {% if borrowed_books %}
+    <div class="grid">
+        {% for borrow in borrowed_books %}
+        <div class="card mybook-card" data-book-id="{{ borrow.book.id }}">
+            <div class="card-img">
+                <img src="{{ borrow.book.cover_url }}" alt="{{ borrow.book.title }}">
+            </div>
+            <div class="card-info">
+                <span class="category-badge">{{ borrow.book.category }}</span>
+                <span class="due-date">Due: {{ borrow.due_date }}</span>
+                <h3>{{ borrow.book.title }}</h3>
+                <p>{{ borrow.book.author }}</p>
+                <button class="return-btn" onclick="returnBookFromTab(this)">Return</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="empty">No borrowed books yet.</p>
+    {% endif %}
+</div>
+
+<div id="bookModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeModalBtn">&times;</span>
+
+        <div class="modal-left">
+            <img id="modalImage" alt="Book Cover">
+        </div>
+
+        <div class="modal-right">
+            <span id="modalCategory" class="category-badge"></span>
+            <h2 id="modalTitle"></h2>
+            <h4 id="modalAuthor"></h4>
+            <p id="modalDesc"></p>
+
+            <div class="meta">
+                <span><i class="fa-solid fa-book"></i> <span id="modalPages"></span> pages</span>
+                <span><i class="fa-solid fa-calendar"></i> <span id="modalYear"></span></span>
+            </div>
+    <button id="borrowBtn" onclick="handleBorrowClick()" class="borrow-btn">
+    Borrow This Book
+</button>
+
+            <hr>
+
+            <div class="rating-section">
+                <p>Rate this book:</p>
+                <div class="stars">
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                    <span class="star">&#9733;</span>
+                </div>
+            </div>
+
+            <textarea id="feedback"></textarea>
+
+            <button class="submit-btn" onclick="submitReview()">Submit</button>
+
+            <button class="view-feedback-btn" onclick="openReviewModal()">See Reviews / Feedback</button>
+        </div>
+    </div>
+</div>
+
+<!-- ⭐ REVIEW MODAL -->
+<div id="reviewModal" class="review-modal">
+    <div class="review-content">
+
+        <span class="close" onclick="closeReviewModal()">&times;</span>
+
+        <h2>Reviews & Feedback</h2>
+
+        <div id="reviewList"></div>
+
+    </div>
+</div>
+
+<div id="logoutModal" class="modal-overlay">
+    <div class="modal-box">
+
+        <div class="modal-icon">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </div>
+
+        <h2>Sign out?</h2>
+        <p>Are you sure you want to log out of your account?</p>
+
+        <div class="modal-actions">
+            <a href="/logout/" class="btn btn-yes">Yes, Logout</a>
+            <button class="btn btn-no" onclick="closeLogoutModal()">Cancel</button>
+        </div>
+
+    </div>
+</div>
+
+<div id="borrowConfirmModal" class="borrow-modal">
+    <div class="borrow-modal-content">
+
+        <!-- LEFT ICON / VISUAL SIDE -->
+       <div class="borrow-visual">
+    <img src="/static/images/logowhite.png" alt="Book Icon">
+</div>
+
+        <!-- RIGHT CONTENT -->
+        <div class="borrow-info">
+
+            <h2>Confirm Borrow</h2>
+           <p class="subtext" id="borrowText">
+            </p>
+
+            <label class="borrow-label">Return Date</label>
+<input type="date" id="returnDateInput">
+
+<label class="borrow-label">Note (optional)</label>
+            <textarea id="noteInput" placeholder="Any special requests..."></textarea>
+
+            <div class="borrow-actions">
+                <button class="cancel-btn" onclick="closeBorrowConfirmModal()">
+                    Cancel
+                </button>
+
+                <button class="confirm-btn" onclick="confirmBorrow()">
+                    Confirm Borrow
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="borrowSuccess" class="borrow-success">
+    <div class="success-box">
+
+        <div class="loader-circle">
+            <svg class="checkmark" viewBox="0 0 52 52">
+                <path d="M14 27 L22 35 L38 18" />
+            </svg>
+        </div>
+
+        <h3 id="successTitle">Success!</h3>
+        <p id="successText">Book borrowed successfully</p>
+
+        <!-- 🎉 CONFETTI -->
+        <div class="confetti-container"></div>
+
+        <!-- 🔔 SOUND -->
+        <audio id="successSound">
+            <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b0c1c.mp3" type="audio/mpeg">
+        </audio>
+
+    </div>
+</div>
+
+<div id="unavailableModal" class="vip-modal">
+    <div class="vip-modal-card">
+
+        <!-- Glow background -->
+        <div class="vip-glow"></div>
+
+        <!-- Warning Icon -->
+        <div class="vip-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+
+        <h2>Book Unavailable</h2>
+        <p id="unavailableText"></p>
+
+        <button class="vip-btn" onclick="closeUnavailableModal()">Okay, got it</button>
+    </div>
+</div>
+
+<!-- ✅ REVIEW SUCCESS MODAL -->
+<div id="reviewSuccessModal" class="success-modal">
+    <div class="success-box">
+        <div class="success-icon">✔</div>
+        <h2>Thank You!</h2>
+        <p>Your feedback has been successfully submitted.</p>
+        <button onclick="closeReviewSuccess()">OK</button>
+    </div>
+</div>
+
+<script src="/static/js/hume.js"></script>
+</body>
+</html>

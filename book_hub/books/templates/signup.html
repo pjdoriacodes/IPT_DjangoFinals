@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Reading Room</title>
+    <link rel="icon" type="image/x-icon" href="/static/images/logowhite.png">
+    <link rel="stylesheet" href="/static/css/saynup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="login-wrapper">
+
+    <div class="login-card">
+
+        <div class="signup-logo">
+    <img src="/static/images/logo.png" alt="Book Hub Logo">
+</div>
+        <h2>Create Account</h2>
+        <p class="subtitle">Sign up to start using your account</p>
+
+        <!-- FORM -->
+        <form method="POST" class="login-form">
+            {% csrf_token %}
+
+            <!-- USERNAME -->
+            <div class="input-group">
+                <input type="text" name="username" required>
+                <label>Username</label>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="input-group">
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="input-group">
+                <input type="password" name="confirm_password" required>
+                <label>Confirm Password</label>
+            </div>
+
+            <!-- BUTTON -->
+            <button type="submit" class="login-btn">
+                Create Account
+            </button>
+        </form>
+
+        <!-- FOOTER -->
+        <div class="footer-text">
+            Already have an account?
+            <a href="{% url 'login' %}">Login</a>
+        </div>
+
+    </div>
+
+</div>
+
+ <div id="signSuccess" class="signup-success">
+        <div class="success-box">
+            <div class="checkmark-circle">
+                <i class="check-icon">✔</i>
+                <div class="pulse-ring"></div>
+            </div>
+            <h3>Account Created Successfully!</h3>
+        </div>
+    </div>
+
+  <script>
+       const signSuccess = "{{ sign_success|default:'False' }}";
+const redirectUrl = "{{ redirect_url|default:'/home/' }}";
+
+if (signSuccess === "True") {
+    const modal = document.getElementById("signSuccess"); // match HTML id
+
+    setTimeout(() => {
+        modal.classList.add("show");
+    }, 50);
+
+    setTimeout(() => {
+        window.location.href = redirectUrl;
+    }, 3000);
+}
+    </script>
+
+</body>
+</html>
