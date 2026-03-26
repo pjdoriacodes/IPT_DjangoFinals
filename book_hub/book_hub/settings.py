@@ -9,8 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 SECRET_KEY = 'django-insecure-5et+jqwt4ht*z%)grxls_(d5@hf6tx&rpj&8f@p77!*fh#b=*t'
 DEBUG = True
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['https://ipt-djangofinals-2.onrender.com']
 
 # APPS
 INSTALLED_APPS = [
